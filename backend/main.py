@@ -208,12 +208,17 @@ def _stub_candidate_jobs():
 
 
 def _stub_comparisons(candidate_jobs):
-    from models.schemas import ComparisonResult, MatchScore
+    from models.schemas import ComparisonResult, MatchScore, FeatureScores
     return [ComparisonResult(
         job_url=job.job_url, candidate_job=job,
-        match_scores=MatchScore(skill_match=0.85, experience_match=0.90, level_match=1.0, overall_score=0.88),
+        feature_scores=FeatureScores(
+            skill_overlap=0.85, experience_gap=0.90, title_similarity=0.80,
+            level_match=1.0, education_match=0.70, certification_match=0.60,
+            preferred_skill_bonus=0.75, location_match=0.90, recency_penalty=0.95, salary_fit=0.85
+        ),
+        match_score=0.88,
         red_flags=[], green_flags=["strong_skill_overlap", "level_exact_match"],
-        overall_fit=0.88,
+        reason="Strong match with excellent skill overlap and exact level alignment.",
     ) for job in candidate_jobs]
 
 

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
@@ -62,7 +62,7 @@ class Settings:
     openai_reasoning_model: str = os.getenv("OPENAI_REASONING_MODEL", "gpt-5-mini")
     openai_http_timeout_seconds: float = _float_env("OPENAI_HTTP_TIMEOUT_SECONDS", 30.0)
     openai_shortlist_limit: int = int(os.getenv("OPENAI_SHORTLIST_LIMIT", "6"))
-    job_search_urls: list[str] = _csv_env("JOB_SEARCH_URLS")
+    job_search_urls: list[str] = field(default_factory=lambda: _csv_env("JOB_SEARCH_URLS"))
     upload_dir: str = os.getenv("UPLOAD_DIR", "data/uploads")
     max_file_size: int = int(os.getenv("MAX_FILE_SIZE", "10485760"))  # 10MB
     log_path: str = os.getenv("LOG_PATH", "logs/job_matcher.log")

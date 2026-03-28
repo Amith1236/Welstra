@@ -19,7 +19,7 @@ from models.schemas import (
     ResumeData,
 )
 
-# Confidence is derived from overall_fit + green/red flag balance.
+# Confidence is derived from match_score + green/red flag balance.
 # These weights tune how much flags adjust the raw score.
 GREEN_FLAG_BONUS = 0.03   # per green flag (capped)
 RED_FLAG_PENALTY = 0.04   # per red flag (capped)
@@ -43,7 +43,7 @@ class EvidenceAgent:
     ) -> list[JobItem]:
         """
         Process all ComparisonResults and return a JobItem per result.
-        Results with overall_fit == 0.0 and no green flags are excluded.
+        Results with match_score == 0.0 and no green flags are excluded.
         """
         items: list[JobItem] = []
         for comp in comparisons:
@@ -59,10 +59,10 @@ class EvidenceAgent:
     ) -> JobItem | None:
         job = comp.candidate_job
 
-        # Compute confidence from overall_fit adjusted by flags
+        # Compute confidence from match_score adjusted by flags
         green_boost = min(MAX_FLAG_ADJUSTMENT, len(comp.green_flags) * GREEN_FLAG_BONUS)
         red_drag   = min(MAX_FLAG_ADJUSTMENT, len(comp.red_flags)   * RED_FLAG_PENALTY)
-        confidence = round(min(1.0, max(0.0, comp.overall_fit + green_boost - red_drag)), 3)
+        confidence = round(min(1.0, max(0.0, comp.match_score + green_boost - red_drag)), 3)
 
         # Skip completely irrelevant results
         if confidence == 0.0 and not comp.green_flags:
@@ -94,10 +94,7 @@ class EvidenceAgent:
 
             # Score breakdown (from MatchScore)
             "score_breakdown": {
-                "skill_match":       comp.match_scores.skill_match,
-                "experience_match":  comp.match_scores.experience_match,
-                "level_match":       comp.match_scores.level_match,
-                "overall_score":     comp.match_scores.overall_score,
+
             },
 
             # Posting freshness
@@ -119,5 +116,5 @@ class EvidenceAgent:
             supporting_data=supporting_data,
             link_to_job=comp.job_url,
             red_flags=comp.red_flags,
-            match_score=comp.overall_fit,
+            match_score=comp.match_score,
         )
