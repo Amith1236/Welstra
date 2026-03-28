@@ -66,6 +66,7 @@ class JobOrchestrator:
         try:
             # Step 1: Extract suitable jobs from resume
             logger.info(f"[{investigation_id}] Starting JobExtractionAgent")
+            investigation.current_agent = "job_extraction"
             investigation.activity_log.append(
                 ActivityLogEntry(agent_name="JobExtractionAgent", message="Extracting suitable roles from resume")
             )
@@ -75,6 +76,7 @@ class JobOrchestrator:
             
             # Step 2: Discover job candidates
             logger.info(f"[{investigation_id}] Starting CandidateDiscoveryAgent")
+            investigation.current_agent = "candidate_discovery"
             investigation.activity_log.append(
                 ActivityLogEntry(agent_name="CandidateDiscoveryAgent", message="Searching for job listings...")
             )
@@ -95,6 +97,7 @@ class JobOrchestrator:
             
             # Step 3: Triage candidates
             logger.info(f"[{investigation_id}] Starting CandidateTriageAgent")
+            investigation.current_agent = "candidate_triage"
             investigation.activity_log.append(
                 ActivityLogEntry(agent_name="CandidateTriageAgent", message="Assessing job fit...")
             )
@@ -120,6 +123,7 @@ class JobOrchestrator:
             
             # Step 4: Compare resume to jobs
             logger.info(f"[{investigation_id}] Starting CandidateComparisonAgent")
+            investigation.current_agent = "candidate_comparison"
             investigation.activity_log.append(
                 ActivityLogEntry(agent_name="CandidateComparisonAgent", message="Comparing skills and experience...")
             )
@@ -137,6 +141,7 @@ class JobOrchestrator:
             
             # Step 5: Extract evidence
             logger.info(f"[{investigation_id}] Starting EvidenceAgent")
+            investigation.current_agent = "evidence"
             investigation.activity_log.append(
                 ActivityLogEntry(agent_name="EvidenceAgent", message="Extracting supporting evidence...")
             )
@@ -146,6 +151,7 @@ class JobOrchestrator:
             
             # Step 6: Rank and select top matches
             logger.info(f"[{investigation_id}] Starting RankingAgent")
+            investigation.current_agent = "ranking"
             investigation.activity_log.append(
                 ActivityLogEntry(agent_name="RankingAgent", message="Ranking top matches...")
             )
@@ -155,6 +161,7 @@ class JobOrchestrator:
             
             # Step 7: Generate summary
             logger.info(f"[{investigation_id}] Starting ResearchSummaryAgent")
+            investigation.current_agent = "summary"
             investigation.activity_log.append(
                 ActivityLogEntry(agent_name="ResearchSummaryAgent", message="Generating summary...")
             )

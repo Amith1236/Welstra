@@ -31,3 +31,7 @@ def configure_logging() -> logging.Logger:
     logger.addHandler(console_handler)
     
     return logger
+
+
+# Initialize logger at module import time
+logger = configure_logging()

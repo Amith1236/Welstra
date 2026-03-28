@@ -19,9 +19,10 @@ from __future__ import annotations
 import math
 import re
 from datetime import datetime, timezone
+from typing import Any
 
 from models.schemas import (
-    CandidateJob,
+    JobProduct,
     ComparisonResult,
     FeatureScores,
     FeatureWeights,
@@ -82,7 +83,7 @@ class CandidateComparisonAgent:
     # Public entry point
     # ------------------------------------------------------------------
 
-    def run(self, resume: ResumeData, job: CandidateJob) -> ComparisonResult:
+    async def run(self, resume: ResumeData, job: JobProduct) -> tuple[ComparisonResult, dict[str, Any]]:
         """Score resume against job and return a ComparisonResult."""
         scores = self._score_all(resume, job)
         match_score = self._weighted_sum(scores)
@@ -90,7 +91,7 @@ class CandidateComparisonAgent:
         green_flags = self._green_flags(resume, job, scores)
         reason = self._build_reason(match_score, scores, red_flags, green_flags)
 
-        return ComparisonResult(
+        result = ComparisonResult(
             job_url=job.job_url,
             candidate_job=job,
             feature_scores=scores,
@@ -99,12 +100,18 @@ class CandidateComparisonAgent:
             green_flags=green_flags,
             reason=reason,
         )
+        
+        return result, {
+            "match_score": result.match_score,
+            "red_flags_count": len(red_flags),
+            "green_flags_count": len(green_flags),
+        }
 
     # ------------------------------------------------------------------
     # Feature scoring — one method per feature
     # ------------------------------------------------------------------
 
-    def _score_all(self, resume: ResumeData, job: CandidateJob) -> FeatureScores:
+    def _score_all(self, resume: ResumeData, job: JobProduct) -> FeatureScores:
         return FeatureScores(
             skill_overlap=self._skill_overlap(resume.skills, job.required_skills),
             experience_gap=self._experience_gap(resume.years_experience, job.years_required),
@@ -376,7 +383,7 @@ class CandidateComparisonAgent:
     def _red_flags(
         self,
         resume: ResumeData,
-        job: CandidateJob,
+        job: JobProduct,
         scores: FeatureScores,
         match_score: float,
     ) -> list[str]:
@@ -410,7 +417,7 @@ class CandidateComparisonAgent:
     def _green_flags(
         self,
         resume: ResumeData,
-        job: CandidateJob,
+        job: JobProduct,
         scores: FeatureScores,
     ) -> list[str]:
         flags: list[str] = []

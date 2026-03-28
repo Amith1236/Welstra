@@ -113,6 +113,23 @@ class FeatureScores(BaseModel):
     salary_fit: float = 0.0
 
 
+class FeatureWeights(BaseModel):
+    """
+    Weights for each feature in the scoring algorithm.
+    Values should sum to 1.0 for proper weighted average.
+    """
+    skill_overlap: float = 0.25
+    experience_gap: float = 0.15
+    title_similarity: float = 0.10
+    level_match: float = 0.10
+    education_match: float = 0.05
+    certification_match: float = 0.05
+    preferred_skill_bonus: float = 0.05
+    location_match: float = 0.10
+    recency_penalty: float = 0.10
+    salary_fit: float = 0.05
+
+
 class ComparisonResult(BaseModel):
     """Result from comparing resume to a job posting."""
     job_url: HttpUrl | str
@@ -193,6 +210,7 @@ class InvestigationResponse(BaseModel):
     """Response containing investigation status and results."""
     investigation_id: str
     status: InvestigationStatus
+    current_agent: str | None = None  # Current agent being executed
     report: Optional[InvestigationReport] = None
     activity_log: list[ActivityLogEntry] = Field(default_factory=list)
     error: str | None = None
